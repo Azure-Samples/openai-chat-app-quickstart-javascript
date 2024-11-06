@@ -30,7 +30,7 @@ const routes = (fastify, opts, done) => {
       { role: "system", content: "You are a helpful assistant." },
     ].concat(requestMessages);
 
-    const chatStreamResponse = openaiClient.beta.chat.completions.stream({
+    const events = await openaiClient.chat.completions.create({
       // Azure Open AI takes the deployment name as the model name
       model: process.env.AZURE_OPENAI_CHAT_DEPLOYMENT_MODEL || "gpt-4o-mini",
       messages: allMessages,
@@ -38,13 +38,13 @@ const routes = (fastify, opts, done) => {
 
     })
     reply.raw.setHeader('Content-Type', 'text/html; charset=utf-8');
-    
-    for await (const chunk of chatStreamResponse) {
-      console.log(JSON.stringify(chunk))
-      if(chunk?.choices){
-      reply.raw.write(JSON.stringify(chunk.choices[0]))
+
+    for await (const event of events) {
+      for (const choice of event.choices) {
+        reply.raw.write(JSON.stringify(choice) + "\n")
       }
     }
+
     return reply.raw.end()
 
   });
