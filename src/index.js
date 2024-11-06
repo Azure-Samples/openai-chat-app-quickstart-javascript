@@ -1,7 +1,8 @@
 import Fastify from 'fastify'
 import path from 'path'
-import fastifyStatic from 'fastify-static'
+import fastifyStatic from '@fastify/static'
 import { fileURLToPath } from 'url'
+import { configure_openai } from './openai-chat.js'
 
 // Define __dirname in ESM
 const __filename = fileURLToPath(import.meta.url)
@@ -13,14 +14,40 @@ const fastify = Fastify({
 
 // Register the fastify-static plugin
 fastify.register(fastifyStatic, {
-    root: path.join(__dirname, 'public'),
-    prefix: '/', // optional: default '/'
-  })
+  root: path.join(__dirname, 'public'),
+  prefix: '/public',
+})
 
-// Serve an HTML file for the root route
-fastify.get('/', async (request, reply) => {
-    return reply.sendFile('index.html') // Ensure you have an index.html in the public directory
-  })
+const routes = (fastify, opts, done) => {
+
+  fastify.post('/chat/stream', async (request, reply) => {
+
+    const requestMessages = request.body.messages;
+    const openaiClient = configure_openai();
+
+    const allMessages = [
+      { role: "system", content: "You are a helpful assistant." },
+    ].concat(requestMessages);
+
+    const chatStreamResponse = openaiClient.beta.chat.completions.stream({
+      // Azure Open AI takes the deployment name as the model name
+      model: process.env.AZURE_OPENAI_CHAT_DEPLOYMENT_MODEL || "gpt-4o-mini",
+      messages: allMessages,
+      stream: true
+    })
+    reply.header('Content-Type', 'text/plain');
+    reply.send(chatStreamResponse)
+  });
+
+  fastify.get('/', (request, reply) => {
+    console.log('index.html')
+    reply.sendFile('index.html')
+  });
+
+  done();
+}
+
+fastify.register(routes);
 
 /**
  * Run the server!
