@@ -3,6 +3,7 @@ import path from 'path'
 import fastifyStatic from '@fastify/static'
 import { fileURLToPath } from 'url'
 import { configure_openai } from './openai-chat.js'
+import { ReadableStream } from 'node:stream/web'
 
 // Define __dirname in ESM
 const __filename = fileURLToPath(import.meta.url)
@@ -34,9 +35,18 @@ const routes = (fastify, opts, done) => {
       model: process.env.AZURE_OPENAI_CHAT_DEPLOYMENT_MODEL || "gpt-4o-mini",
       messages: allMessages,
       stream: true
+
     })
-    reply.header('Content-Type', 'text/plain');
-    reply.send(chatStreamResponse)
+    reply.raw.setHeader('Content-Type', 'text/html; charset=utf-8');
+    
+    for await (const chunk of chatStreamResponse) {
+      console.log(JSON.stringify(chunk))
+      if(chunk?.choices){
+      reply.raw.write(JSON.stringify(chunk.choices[0]))
+      }
+    }
+    return reply.raw.end()
+
   });
 
   fastify.get('/', (request, reply) => {

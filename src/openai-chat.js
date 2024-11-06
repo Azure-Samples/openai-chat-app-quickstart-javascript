@@ -6,10 +6,10 @@ function getChainedCredential() {
     // - ManagedIdentityCredential is used for deployment on Azure Container Apps
     // - DefaultAzureCredential is used for local development
     // The order of the credentials is important, as the first valid token is used
-    //return new ChainedTokenCredential(
-        //new ManagedIdentityCredential(process.env.AZURE_CLIENT_ID), 
-       return new DefaultAzureCredential()
-    //);
+    return new ChainedTokenCredential(
+        new ManagedIdentityCredential(process.env.AZURE_CLIENT_ID), 
+        new DefaultAzureCredential()
+    );
 }
 
 export function configure_openai(){
