@@ -1,8 +1,8 @@
-import Fastify from 'fastify'
+import Fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import path from 'path'
 import fastifyStatic from '@fastify/static'
 import { fileURLToPath } from 'url'
-import { configure_openai } from './openai-chat.js'
+import { configure_openai } from './openai-chat'
 import { ReadableStream } from 'node:stream/web'
 
 // Define __dirname in ESM
@@ -19,21 +19,36 @@ fastify.register(fastifyStatic, {
   prefix: '/public',
 })
 
-const routes = (fastify, opts, done) => {
+interface ChatCompletionMessage {
+  role: string;
+  content: string;
+  name: string;
+}
 
-  fastify.post('/chat/stream', async (request, reply) => {
+interface ChatRequestBody {
+  messages: ChatCompletionMessage[];
+}
 
-    const requestMessages = request.body.messages;
+const routes = (fastify: FastifyInstance, _: any, done: () => void) => {
+
+  fastify.post('/chat/stream', async (request: FastifyRequest<{ Body: ChatRequestBody }>, reply) => {
+
+    const requestMessages: ChatCompletionMessage[] = request?.body?.messages;
     const openaiClient = configure_openai();
 
+    if (!openaiClient) {
+      throw new Error("Azure OpenAI client is not configured");
+    }
+
     const allMessages = [
-      { role: "system", content: "You are a helpful assistant." },
-    ].concat(requestMessages);
+      { role: "system", content: "You are a helpful assistant.", name: '' },
+      ...requestMessages
+    ] as ChatCompletionMessage[];
 
     const events = await openaiClient.chat.completions.create({
       // Azure Open AI takes the deployment name as the model name
       model: process.env.AZURE_OPENAI_CHAT_DEPLOYMENT_MODEL || "gpt-4o-mini",
-      messages: allMessages,
+      messages: allMessages as unknown,
       stream: true
 
     })
@@ -49,7 +64,7 @@ const routes = (fastify, opts, done) => {
 
   });
 
-  fastify.get('/', (request, reply) => {
+  fastify.get('/', (_: FastifyRequest, reply: FastifyReply) => {
     console.log('index.html')
     reply.sendFile('index.html')
   });
@@ -65,7 +80,7 @@ fastify.register(routes);
 const start = async () => {
   try {
     await fastify.listen({ port: 3000, host: '0.0.0.0' })
-    console.log(`server listening on ${fastify.server.address().port}`)
+    console.log(`server listening on 3000`)
   } catch (err) {
     fastify.log.error(err)
     process.exit(1)
