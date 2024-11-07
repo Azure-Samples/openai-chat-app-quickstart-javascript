@@ -47,6 +47,6 @@ export async function chatRoute (request: FastifyRequest<{ Body: ChatRequestBody
       }
     }
 
-    return reply.raw.end()
+    reply.raw.end()
 
   }
