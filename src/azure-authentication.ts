@@ -1,5 +1,5 @@
-import { DefaultAzureCredential, getBearerTokenProvider, ManagedIdentityCredential, ChainedTokenCredential } from "@azure/identity";
-import { AzureOpenAI  } from "openai";
+import { ChainedTokenCredential, DefaultAzureCredential, getBearerTokenProvider, ManagedIdentityCredential } from "@azure/identity";
+import { AzureOpenAI } from "openai";
 
 function getChainedCredential(): ChainedTokenCredential {
     // Create a ChainedTokenCredential with ManagedIdentityCredential and DefaultAzureCredential
@@ -41,6 +41,6 @@ export function configure_openai(): AzureOpenAI | undefined{
         return new AzureOpenAI (options);
 
     } catch (error) {
-        console.log('Get client error ', error);
+        console.error('Get client error ', error);
     }
 }

@@ -1,6 +1,6 @@
+import fastifyStatic from '@fastify/static'
 import Fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import path from 'path'
-import fastifyStatic from '@fastify/static'
 import { fileURLToPath } from 'url'
 import { chatRoute } from './openai-chat-api.js'
 
@@ -13,7 +13,6 @@ const fastify = Fastify({
 })
 
 const publicPath = path.join(__dirname, 'public')
-console.log('publicPath', publicPath)
 
 // Register the fastify-static plugin
 fastify.register(fastifyStatic, {
@@ -26,7 +25,6 @@ const routes = (fastify: FastifyInstance, _: any, done: () => void) => {
   fastify.post('/chat/stream', chatRoute);
 
   fastify.get('/', (_: FastifyRequest, reply: FastifyReply) => {
-    console.log('index.html')
     reply.sendFile('index.html')
   });
 
