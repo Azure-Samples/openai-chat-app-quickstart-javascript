@@ -6,6 +6,7 @@ function getChainedCredential(): ChainedTokenCredential {
     // - ManagedIdentityCredential is used for deployment on Azure Container Apps
     // - DefaultAzureCredential is used for local development
     // The order of the credentials is important, as the first valid token is used
+
     return new ChainedTokenCredential(
         new ManagedIdentityCredential(process.env.AZURE_CLIENT_ID!), 
         new DefaultAzureCredential()
@@ -15,6 +16,8 @@ function getChainedCredential(): ChainedTokenCredential {
 export function configure_openai(): AzureOpenAI | undefined{
     try {
 
+        const chainedCredential  = getChainedCredential();
+
         if (!process.env.AZURE_OPENAI_ENDPOINT!) {
             throw new Error("AZURE_OPENAI_ENDPOINT is required for Azure OpenAI");
         }
@@ -22,7 +25,6 @@ export function configure_openai(): AzureOpenAI | undefined{
             throw new Error("AZURE_OPENAI_CHAT_DEPLOYMENT is required for Azure OpenAI");
         }
 
-        const chainedCredential  = getChainedCredential();
         const scope = "https://cognitiveservices.azure.com/.default";
 
         // Get the token provider for Azure OpenAI based on the selected Azure credential

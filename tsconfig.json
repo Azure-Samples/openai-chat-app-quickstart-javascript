@@ -1,14 +1,17 @@
 {
     "compilerOptions": {
-      "target": "ES2020",
-      "module": "ESNext",
-      "moduleResolution": "node",
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "strict": true,
+
       "outDir": "./dist",
       "rootDir": "./src",
-      "resolveJsonModule": true
+
+      // THE SETTINGS BELOW DEFINE FEATURE SUPPORT, MODULE SUPPORT, AND ES-SYNTAX SUPPORT
+      "lib": ["ESNext"],
+      "target": "ES2020",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext", 
+      "esModuleInterop": true, // Eases ESM support
+      "types": ["node"],
+      "allowSyntheticDefaultImports": true,
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules"]

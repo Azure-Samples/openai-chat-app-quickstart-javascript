@@ -5,8 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "dev": "NODE_ENV=development node -r dotenv/config dist/index.js",
+    "clean": "rimraf dist",
+    "build:fe": "cp \"src/public\" \"./dist/public/\" -r",
+    "build": "npm run clean && tsc && npm run build:fe",
+    "dev": "npm run build && NODE_ENV=development node -r dotenv/config dist/index.js",
     "start": "npm run build && node dist/index.js"
   },
   "keywords": [],
@@ -18,5 +20,8 @@
     "dotenv": "^16.4.5",
     "fastify": "^5.1.0",
     "openai": "^4.71.0"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1"
   }
 }
