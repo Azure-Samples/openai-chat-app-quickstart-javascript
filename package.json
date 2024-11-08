@@ -1,7 +1,7 @@
 {
   "name": "openai-chat-app-quickstart-javascript",
   "version": "1.0.0",
-  "description": "(short, 1-3 sentenced, description of the project)",
+  "description": "A TypeScript app that uses Azure OpenAI to generate responses to user messages.",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@azure/identity": "^4.5.0",
     "@fastify/static": "^8.0.2",
