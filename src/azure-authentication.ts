@@ -9,7 +9,9 @@ function getChainedCredential(): ChainedTokenCredential {
 
     return new ChainedTokenCredential(
         new ManagedIdentityCredential(process.env.AZURE_CLIENT_ID!), 
-        new DefaultAzureCredential()
+        new DefaultAzureCredential({
+            tenantId: process.env.AZURE_TENANT_ID ? process.env.AZURE_TENANT_ID : undefined
+          })
     );
 }
 
