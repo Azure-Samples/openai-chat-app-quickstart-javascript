@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { AzureOpenAI } from "openai";
-import { configure_openai } from './azure-authentication.js';
+import { getOpenAiClient } from './azure-authentication.js';
 
 import { ChatCompletionChunk, ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 interface ChatRequestBody {
@@ -9,7 +9,7 @@ interface ChatRequestBody {
 export async function chatRoute (request: FastifyRequest<{ Body: ChatRequestBody }>, reply: FastifyReply) {
 
     const requestMessages: ChatCompletionMessageParam[] = request?.body?.messages;
-    const openaiClient: AzureOpenAI | undefined = configure_openai();
+    const openaiClient: AzureOpenAI | undefined = getOpenAiClient();
 
     if (!openaiClient) {
       throw new Error("Azure OpenAI client is not configured");

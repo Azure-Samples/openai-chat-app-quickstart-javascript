@@ -10,12 +10,12 @@ function getChainedCredential(): ChainedTokenCredential {
     return new ChainedTokenCredential(
         new ManagedIdentityCredential(process.env.AZURE_CLIENT_ID!), 
         new DefaultAzureCredential({
-            tenantId: process.env.AZURE_TENANT_ID ? process.env.AZURE_TENANT_ID : undefined
+            tenantId: process.env.AZURE_TENANT_ID! ? process.env.AZURE_TENANT_ID! : undefined
           })
     );
 }
 
-export function configure_openai(): AzureOpenAI | undefined{
+export function getOpenAiClient(): AzureOpenAI | undefined{
     try {
 
         const chainedCredential  = getChainedCredential();
