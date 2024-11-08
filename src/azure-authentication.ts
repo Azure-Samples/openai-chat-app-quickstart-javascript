@@ -45,6 +45,6 @@ export function getOpenAiClient(): AzureOpenAI | undefined{
         return new AzureOpenAI (options);
 
     } catch (error) {
-        console.error('Get client error ', error);
+        console.error('Error getting Azure OpenAI client: ', error);
     }
 }
