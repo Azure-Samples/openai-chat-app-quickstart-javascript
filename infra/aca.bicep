@@ -51,7 +51,7 @@ module app 'core/host/container-app-upsert.bicep' = {
     containerAppsEnvironmentName: containerAppsEnvironmentName
     containerRegistryName: containerRegistryName
     env: env
-    targetPort: 50505
+    targetPort: 3000
   }
 }
 

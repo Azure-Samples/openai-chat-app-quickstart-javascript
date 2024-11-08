@@ -1,10 +1,10 @@
 services:
   app:
     build:
-      context: ./src
+      context: ./
     env_file:
       - .env
     ports:
-      - 50505:50505
+      - 3000:3000
     volumes:
-      - ./src:/code
+      - ./:/code
