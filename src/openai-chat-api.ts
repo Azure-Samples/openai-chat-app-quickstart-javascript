@@ -16,22 +16,15 @@ export async function chatRoute (request: FastifyRequest<{ Body: ChatRequestBody
     }
 
     const allMessages = [
-      { role: "system", content: "You are a helpful assistant.", name: '' },
+      { role: "system", content: "You are a helpful assistant."},
       ...requestMessages
     ] as ChatCompletionMessageParam [];
-
-    //add name property to each message with a value if an number such as 1 or 2 is present in the content
-    // allMessages.forEach((message, index) => {
-    //   // @ts-nocheck
-    //   message["name"] = index.toString();
-    // });
 
     const chatCompletionChunks = await openaiClient.chat.completions.create({
       // Azure Open AI takes the deployment name as the model name
       model: process.env.AZURE_OPENAI_CHAT_DEPLOYMENT_MODEL || "gpt-4o-mini",
       messages: allMessages,
       stream: true
-
     })
     reply.raw.setHeader('Content-Type', 'text/html; charset=utf-8');
     reply.raw.setHeader('Cache-Control', 'no-cache');
