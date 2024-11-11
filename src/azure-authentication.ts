@@ -1,16 +1,16 @@
-import { ChainedTokenCredential, DefaultAzureCredential, getBearerTokenProvider, ManagedIdentityCredential } from "@azure/identity";
+import { ChainedTokenCredential, AzureDeveloperCliCredential, getBearerTokenProvider, ManagedIdentityCredential } from "@azure/identity";
 import { AzureOpenAI } from "openai";
 
-// Create a ChainedTokenCredential with ManagedIdentityCredential and DefaultAzureCredential
+// Create a ChainedTokenCredential with ManagedIdentityCredential and AzureDeveloperCliCredential
 function getChainedCredential(): ChainedTokenCredential {
     
     // - ManagedIdentityCredential is used for deployment on Azure Container Apps
-    // - DefaultAzureCredential is used for local development
+    // - AzureDeveloperCliCredential is used for local development
     // The order of the credentials is important, as the first valid token is used
 
     return new ChainedTokenCredential(
         new ManagedIdentityCredential(process.env.AZURE_CLIENT_ID!), 
-        new DefaultAzureCredential({
+        new AzureDeveloperCliCredential({
             tenantId: process.env.AZURE_TENANT_ID! ? process.env.AZURE_TENANT_ID! : undefined
           })
     );
@@ -27,10 +27,10 @@ function getTokenProvider(): () => Promise<string> {
 export function getOpenAiClient(): AzureOpenAI | undefined{
     try {
 
-        if (!process.env.AZURE_OPENAI_ENDPOINT!) {
+        if (!process.env.AZURE_OPENAI_ENDPOINT) {
             throw new Error("AZURE_OPENAI_ENDPOINT is required for Azure OpenAI");
         }
-        if (!process.env.AZURE_OPENAI_CHAT_DEPLOYMENT!) {
+        if (!process.env.AZURE_OPENAI_CHAT_DEPLOYMENT) {
             throw new Error("AZURE_OPENAI_CHAT_DEPLOYMENT is required for Azure OpenAI");
         }
 

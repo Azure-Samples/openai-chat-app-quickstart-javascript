@@ -21,10 +21,10 @@ export async function chatRoute (request: FastifyRequest<{ Body: ChatRequestBody
     ] as ChatCompletionMessageParam [];
 
     //add name property to each message with a value if an number such as 1 or 2 is present in the content
-    allMessages.forEach((message, index) => {
-      // @ts-nocheck
-      message["name"] = index.toString();
-    });
+    // allMessages.forEach((message, index) => {
+    //   // @ts-nocheck
+    //   message["name"] = index.toString();
+    // });
 
     const chatCompletionChunks = await openaiClient.chat.completions.create({
       // Azure Open AI takes the deployment name as the model name
